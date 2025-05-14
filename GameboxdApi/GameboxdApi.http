@@ -1,0 +1,6 @@
+@GameboxdApi_HostAddress = http://localhost:5103
+
+GET {{GameboxdApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
