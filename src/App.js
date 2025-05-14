@@ -19,6 +19,7 @@ const GET_GAMES = gql`
       title
       coverImage
       platforms
+      averageRating
     }
   }
 `;
@@ -34,7 +35,7 @@ function GameCard({ game }) {
       <div className="flex flex-col">
         <h2 className="text-xl font-bold">{game.title}</h2>
         <p className="text-sm text-gray-500">{game.platform}</p>
-        <p className="text-yellow-600 font-semibold">Rating: {game.rating}/10</p>
+        <p className="text-yellow-600 font-semibold">Rating: {game.averageRating}/10</p>
         <p className="text-sm mt-2 text-gray-700">{game.review}</p>
       </div>
     </div>

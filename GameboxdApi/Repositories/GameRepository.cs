@@ -1,5 +1,6 @@
 ﻿using GameboxdApi.Models;
 using System.Collections.Concurrent;
+using GameboxdApi.GraphQL.Types;
 
 namespace GameboxdApi.Repositories;
 

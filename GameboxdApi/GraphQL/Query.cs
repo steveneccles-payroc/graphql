@@ -1,4 +1,5 @@
-﻿using GameboxdApi.Models;
+﻿using GameboxdApi.GraphQL.Types;
+using GameboxdApi.Models;
 using GameboxdApi.Repositories;
 
 namespace GameboxdApi.GraphQL;
