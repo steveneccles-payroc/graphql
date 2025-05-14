@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("GameboxdApi")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+aeecef3d06cc14af9ea9868ec01431169e1ead82")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+57d3b93040db42075950afc8d44d056f4f7b0d96")]
 [assembly: System.Reflection.AssemblyProductAttribute("GameboxdApi")]
 [assembly: System.Reflection.AssemblyTitleAttribute("GameboxdApi")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
