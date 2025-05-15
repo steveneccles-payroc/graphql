@@ -11,6 +11,7 @@ const GET_GAMES = gql`
     platforms
     year
     averageRating
+    hearts
     reviews {  
       username
       rating
@@ -18,6 +19,21 @@ const GET_GAMES = gql`
     }
   }
 `;
+
+function renderStars(ratingOutOf10) {
+    const rating = ratingOutOf10 / 2; // convert to 0–5 scale
+    const fullStars = Math.floor(rating);
+    const halfStar = rating % 1 >= 0.25 && rating % 1 < 0.75;
+    const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
+  
+    return (
+      <span className="text-yellow-500">
+        {"★".repeat(fullStars)}
+        {halfStar ? "½" : ""}
+        {"☆".repeat(emptyStars)}
+      </span>
+    );
+  }
 
 function GameCard({ game }) {
   // Optionally calculate average score if ratings are present
@@ -29,26 +45,28 @@ function GameCard({ game }) {
       : null;
 
   return (
-    <Link to={`/games/${game.id}`} className="hover:opacity-90 transition">
+<Link to={`/games/${game.id}`} className="hover:opacity-90 transition">
       <div className="bg-white rounded-2xl shadow p-4 flex gap-4 max-w-md w-full">
         <img
           src={game.coverImage}
           alt={game.title}
           className="w-24 h-32 object-cover rounded-lg"
         />
-        <div className="flex flex-col">
-          <h2 className="text-xl font-bold">{game.title} ({game.year})</h2>
-          <p className="text-sm text-gray-500">
-            {game.platforms?.join(", ") || "Unknown platform"}
-          </p>
-          <p className="text-yellow-600 font-semibold">
-            Rating: {game.averageRating ?? "N/A"}/10
-          </p>
-          {game.ratings?.[0]?.review && (
-            <p className="text-sm mt-2 text-gray-700">
-              “{game.ratings[0].review}”
-            </p>
-          )}
+        <div className="flex flex-col flex-1 justify-between">
+          <div>
+            <h2 className="text-xl font-bold">{game.title} ({game.year})</h2>
+            <p className="text-sm text-gray-500">{game.platform}</p>
+            <div className="text-sm text-yellow-600 font-semibold flex items-center gap-1">
+              {renderStars(game.averageRating ?? 0)}
+              <span className="ml-1 text-xs text-gray-600">
+                ({(game.averageRating ?? 0).toFixed(1)}/10)
+              </span>
+            </div>
+            <p className="text-sm mt-2 text-gray-700">{game.review}</p>
+          </div>
+          <div className="mt-2 text-sm text-pink-600 font-medium flex items-center gap-1">
+            ❤️ {game.hearts} {game.hearts === 1 ? "heart" : "hearts"}
+          </div>
         </div>
       </div>
     </Link>
@@ -58,6 +76,7 @@ function GameCard({ game }) {
 export default function GameList() {
   const [searchTerm, setSearchTerm] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const [sortField, setSortField] = useState("title");
 
   const { loading, error, data, refetch } = useQuery(GET_GAMES, {
     variables: { search: searchQuery },
@@ -68,6 +87,19 @@ export default function GameList() {
   }, [searchQuery, refetch]);
 
   const games = data?.games;
+
+  const sortedGames = [...(data?.games || [])].sort((a, b) => {
+    if (sortField === "title") {
+      return a.title.localeCompare(b.title);
+    } else if (sortField === "year") {
+      return b.year - a.year;
+    } else if (sortField === "averageRating") {
+      return b.averageRating - a.averageRating;
+    } else if (sortField === "hearts") {
+      return b.hearts - a.hearts;
+    }
+    return 0;
+  });
 
   return (
     <div className="flex flex-col items-center p-4 space-y-6">
@@ -87,16 +119,32 @@ export default function GameList() {
         </button>
       </div>
 
+      <div className="flex gap-2 items-center w-full max-w-md">
+  <label htmlFor="sort" className="text-sm font-medium text-gray-700">Sort by:</label>
+  <select
+    id="sort"
+    value={sortField}
+    onChange={(e) => setSortField(e.target.value)}
+    className="p-2 rounded border border-gray-300"
+  >
+    <option value="title">Name</option>
+    <option value="year">Year</option>
+    <option value="averageRating">Average Rating</option>
+    <option value="hearts">Hearts</option>
+  </select>
+</div>
+
+
       {loading && <p>Loading games...</p>}
       {error && <p className="text-red-500">Error loading games.</p>}
 
+
+
       <div className="grid gap-4 w-full max-w-md">
-        {Array.isArray(games) && games.length > 0 ? (
-          games.map((game) => <GameCard key={game.id} game={game} />)
-        ) : (
-          !loading && <p className="text-gray-600 text-center">No games found.</p>
-        )}
-      </div>
+  {sortedGames.map((game) => (
+    <GameCard key={game.id} game={game} />
+  ))}
+</div>
     </div>
   );
 }

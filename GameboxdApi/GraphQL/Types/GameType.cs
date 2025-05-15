@@ -21,5 +21,14 @@ public class GameType : ObjectType<Game>
                 var reviews = ctx.Parent<Game>().Reviews;
                 return reviews.Any() ? reviews.Average(r => r.Rating) : 0;
             });
+
+        descriptor
+            .Field("hearts")
+            .Type<IntType>()
+            .Resolve(ctx =>
+            {
+                var reviews = ctx.Parent<Game>().Reviews;
+                return reviews.Any() ? reviews.Count(x => x.Heart) : 0;
+            });
     }
 }
